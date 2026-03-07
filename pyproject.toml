@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "postmortem"
+version = "0.1.0"
+description = "Instant incident timelines from your git repository"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [{ name = "postmortem contributors" }]
+keywords = ["git", "incident", "timeline", "devops", "cli", "postmortem"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Version Control :: Git",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = [
+    "click>=8.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/phlx0/postmortem"
+Repository = "https://github.com/phlx0/postmortem"
+"Bug Tracker" = "https://github.com/phlx0/postmortem/issues"
+Changelog = "https://github.com/phlx0/postmortem/blob/main/CHANGELOG.md"
+
+[project.scripts]
+postmortem = "postmortem.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["postmortem*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "PT"]
+ignore = ["E501"]
+
+[tool.coverage.run]
+source = ["postmortem"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
