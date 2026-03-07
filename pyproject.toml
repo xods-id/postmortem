@@ -9,7 +9,7 @@ description = "Instant incident timelines from your git repository"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"
-authors = [{ name = "postmortem contributors" }]
+authors = [{ name = "phlx0" }]
 keywords = ["git", "incident", "timeline", "devops", "cli", "postmortem"]
 classifiers = [
     "Development Status :: 3 - Alpha",
