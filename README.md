@@ -3,8 +3,8 @@
 # 🔍 postmortem
 
 **When production breaks, stop guessing. Start knowing.**
+
 [![CI](https://img.shields.io/github/actions/workflow/status/phlx0/postmortem/ci.yml?style=flat-square&label=CI)](https://github.com/phlx0/postmortem/actions)
-[![PyPI](https://img.shields.io/pypi/v/postmortem?style=flat-square)](https://pypi.org/project/postmortem/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
