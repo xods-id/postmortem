@@ -14,12 +14,11 @@ import json
 import os
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from postmortem.collectors import BaseCollector
 from postmortem.models import Event, EventKind
-
 
 _API_BASE = "https://sentry.io/api/0"
 _MAX_ISSUES = 10
@@ -43,7 +42,7 @@ def _get(url: str, token: str) -> list | dict:
 def _fmt_ts(ts_str: str) -> datetime:
     """Parse Sentry's ISO-8601 timestamps (with or without microseconds)."""
     ts_str = ts_str.rstrip("Z").split(".")[0]
-    return datetime.fromisoformat(ts_str).replace(tzinfo=timezone.utc)
+    return datetime.fromisoformat(ts_str).replace(tzinfo=UTC)
 
 
 class SentryCollector(BaseCollector):
@@ -86,7 +85,7 @@ class SentryCollector(BaseCollector):
 
     def _fetch_issues(self) -> list[Event]:
         since_iso = self.since.strftime("%Y-%m-%dT%H:%M:%S")
-        now_iso = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%S")
 
         if self.project:
             url = (

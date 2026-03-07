@@ -2,15 +2,24 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from io import StringIO
 
-from postmortem.models import Event, EventKind, HotspotFile, Timeline
+from postmortem.models import EventKind, HotspotFile, Timeline
 from postmortem.renderers import BaseRenderer
 
-_RESET = "\033[0m"; _BOLD = "\033[1m"; _DIM = "\033[2m"
-_RED = "\033[31m"; _GREEN = "\033[32m"; _YELLOW = "\033[33m"
-_CYAN = "\033[36m"; _MAGENTA = "\033[35m"; _BLUE = "\033[34m"; _WHITE = "\033[97m"
+# Split multiple statements into separate lines to fix ruff E702
+_RESET = "\033[0m"
+_BOLD = "\033[1m"
+_DIM = "\033[2m"
+
+_RED = "\033[31m"
+_GREEN = "\033[32m"
+_YELLOW = "\033[33m"
+_CYAN = "\033[36m"
+_MAGENTA = "\033[35m"
+_BLUE = "\033[34m"
+_WHITE = "\033[97m"
 _ORANGE = "\033[38;5;208m"
 
 _KIND_STYLE: dict[EventKind, tuple[str, str]] = {
@@ -23,7 +32,12 @@ _KIND_STYLE: dict[EventKind, tuple[str, str]] = {
     EventKind.HOTSPOT:     ("🔥", _ORANGE),
 }
 
-_RISK_COLOUR = {(0.0, 0.3): _GREEN, (0.3, 0.6): _YELLOW, (0.6, 0.8): _ORANGE, (0.8, 1.1): _RED}
+_RISK_COLOUR = {
+    (0.0, 0.3): _GREEN,
+    (0.3, 0.6): _YELLOW,
+    (0.6, 0.8): _ORANGE,
+    (0.8, 1.1): _RED,
+}
 
 
 def _risk_colour(score: float) -> str:
@@ -44,7 +58,12 @@ class TerminalRenderer(BaseRenderer):
         if timeline.hotspots:
             self._write_hotspots(buf, timeline.hotspots)
         if timeline.is_empty:
-            buf.write(self._c(_DIM, f"  No events found in the last {self._fmt_window()}.\n\n"))
+            buf.write(
+                self._c(
+                    _DIM,
+                    f"  No events found in the last {self._fmt_window()}.\n\n",
+                )
+            )
         else:
             self._write_events(buf, timeline)
         self._write_summary(buf, timeline)
@@ -54,7 +73,7 @@ class TerminalRenderer(BaseRenderer):
         return f"{code}{text}{_RESET}" if self.color else text
 
     def _write_header(self, buf: StringIO, timeline: Timeline) -> None:
-        now = datetime.now(tz=timezone.utc).astimezone()
+        now = datetime.now(tz=UTC).astimezone()
         buf.write("\n")
         buf.write(self._c(_BOLD + _WHITE, "─" * 72) + "\n")
         buf.write(self._c(_BOLD + _WHITE, f"  🔍  postmortem  ·  {self.repo_path.name}") + "\n")
@@ -66,7 +85,7 @@ class TerminalRenderer(BaseRenderer):
         for h in hotspots[:5]:
             colour = _risk_colour(h.risk_score)
             risk = f"{h.risk_score:.0%}"
-            bar = self._c(colour, f"■■■"[:max(1, int(h.risk_score * 3))] + "□□□"[max(1, int(h.risk_score * 3)):])
+            bar = self._c(colour, "■■■"[:max(1, int(h.risk_score * 3))] + "□□□"[max(1, int(h.risk_score * 3)):])
             path = self._c(_WHITE, h.path)
             meta = self._c(_DIM, f"changed {h.change_count}x  risk {risk}")
             buf.write(f"  {bar}  {path}  {meta}\n")
@@ -85,11 +104,11 @@ class TerminalRenderer(BaseRenderer):
                 buf.write(self._c(_BOLD + _CYAN, f"  ── {date_str} ──\n\n"))
 
             icon, colour = _KIND_STYLE.get(event.kind, ("•", _WHITE))
-            ts    = self._c(_DIM, event.timestamp.astimezone().strftime("%H:%M:%S"))
+            ts = self._c(_DIM, event.timestamp.astimezone().strftime("%H:%M:%S"))
             badge = self._c(colour, icon)
-            summ  = self._c(_WHITE, event.summary)
-            sha   = self._c(_DIM, f"[{event.short_sha}]") if event.short_sha else ""
-            auth  = self._c(_DIM, f"  ← {event.author}") if event.author else ""
+            summ = self._c(_WHITE, event.summary)
+            sha = self._c(_DIM, f"[{event.short_sha}]") if event.short_sha else ""
+            auth = self._c(_DIM, f"  ← {event.author}") if event.author else ""
             buf.write(f"  {ts}  {badge}  {summ}  {sha}{auth}\n")
 
             # Sentry: show occurrence count
@@ -121,7 +140,7 @@ class TerminalRenderer(BaseRenderer):
         buf.write(self._c(_DIM, "  " + "  ·  ".join(parts) + "\n\n"))
 
     def _fmt_window(self) -> str:
-        delta = datetime.now(tz=timezone.utc) - self.since
+        delta = datetime.now(tz=UTC) - self.since
         total = int(delta.total_seconds())
         if total < 3600:
             return f"{total // 60}m"

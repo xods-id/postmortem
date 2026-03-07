@@ -1,12 +1,13 @@
 """CLI entry point for postmortem."""
 
 import sys
+
 import click
 
 from postmortem import __version__
 from postmortem.pipeline import build_timeline
-from postmortem.renderers.terminal import TerminalRenderer
 from postmortem.renderers.markdown import MarkdownRenderer
+from postmortem.renderers.terminal import TerminalRenderer
 from postmortem.utils.time import parse_since
 
 

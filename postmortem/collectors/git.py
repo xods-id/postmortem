@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from postmortem.collectors import BaseCollector
 from postmortem.models import Event, EventKind
-
 
 # git log format: <unix-timestamp>|<sha>|<author>|<subject>
 _LOG_FORMAT = "%at|%H|%an|%s"
@@ -38,7 +37,7 @@ def _classify(subject: str) -> EventKind:
 
 def _since_flag(since: datetime) -> str:
     """Return ISO-8601 string git understands."""
-    return since.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return since.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 class GitCollector(BaseCollector):
@@ -83,7 +82,7 @@ class GitCollector(BaseCollector):
                 continue
             ts_raw, sha, author, subject = parts
             try:
-                ts = datetime.fromtimestamp(int(ts_raw), tz=timezone.utc)
+                ts = datetime.fromtimestamp(int(ts_raw), tz=UTC)
             except ValueError:
                 continue
 
@@ -122,7 +121,7 @@ class GitCollector(BaseCollector):
             ts_raw, tag_name = parts[0], parts[1]
             subject = parts[2] if len(parts) > 2 else ""
             try:
-                ts = datetime.fromtimestamp(int(ts_raw), tz=timezone.utc)
+                ts = datetime.fromtimestamp(int(ts_raw), tz=UTC)
             except ValueError:
                 continue
             if ts < self.since:

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class EventKind(str, Enum):
+class EventKind(StrEnum):
     COMMIT = "commit"
     MERGE = "merge"
     TAG = "tag"

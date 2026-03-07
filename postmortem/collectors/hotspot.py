@@ -14,12 +14,11 @@ from __future__ import annotations
 
 import subprocess
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from postmortem.collectors import BaseCollector
 from postmortem.models import Event, EventKind, HotspotFile
-
 
 _LOG_FORMAT = "%at|%H"
 _SEP = "|"
@@ -35,7 +34,7 @@ def _run(args: list[str], cwd: Path) -> str:
 
 
 def _since_flag(since: datetime) -> str:
-    return since.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return since.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 class HotspotCollector(BaseCollector):
@@ -81,9 +80,9 @@ class HotspotCollector(BaseCollector):
         max_changes = max(len(v) for v in active.values())
         window_seconds = max(
             1,
-            (datetime.now(tz=timezone.utc) - self.since).total_seconds()
+            (datetime.now(tz=UTC) - self.since).total_seconds()
         )
-        recency_cutoff = datetime.now(tz=timezone.utc).timestamp() - window_seconds * 0.25
+        recency_cutoff = datetime.now(tz=UTC).timestamp() - window_seconds * 0.25
 
         hotspots: list[HotspotFile] = []
         for filepath, appearances in active.items():
@@ -153,7 +152,7 @@ class HotspotCollector(BaseCollector):
                 continue
             ts_raw, sha = parts
             try:
-                ts = datetime.fromtimestamp(int(ts_raw), tz=timezone.utc)
+                ts = datetime.fromtimestamp(int(ts_raw), tz=UTC)
             except ValueError:
                 continue
             files = self._files_for(sha)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 _PATTERN = re.compile(r"^(?P<value>\d+)(?P<unit>[mhdw])$")
 
@@ -37,4 +37,4 @@ def parse_since(value: str) -> datetime:
     amount = int(match.group("value"))
     unit = match.group("unit")
     delta = timedelta(seconds=amount * _UNIT_TO_SECONDS[unit])
-    return datetime.now(tz=timezone.utc) - delta
+    return datetime.now(tz=UTC) - delta
